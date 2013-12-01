@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <script type="text/javascript" src="/static/jquery.js"></script>
+    <script type="text/javascript" src="/static/wsjs/swfobject.js"></script>
+    <script type="text/javascript" src="/static/wsjs/web_socket.js"></script>
+
+    <script type="text/javascript">
+
+      // Let the library know where WebSocketMain.swf is:
+      WEB_SOCKET_SWF_LOCATION = "/static/wsjs/WebSocketMain.swf";
+
+      // Write your code in the same way as for native WebSocket:
+      var ws = new WebSocket("ws://127.0.0.1:8000/socket");
+      ws.onopen = function() {
+        //ws.send("Hello");  // Sends a message.
+      };
+      ws.onmessage = function(e) {
+        debugger;
+      };
+      ws.onclose = function() {
+      };
+
+      $(document).ready(function(){
+        $('div').mousedown(function(){
+          ws.send(JSON.stringify({
+            dir: $(this).attr('id'),
+            stop: false
+          }));
+        }).mouseup(function(){
+          ws.send(JSON.stringify({
+            dir: $(this).attr('id'),
+            stop: true
+          }));
+        });
+      });
+
+    </script>
+    <style>
+div{
+  position: fixed;
+  border: 1px solid black;
+}
+#forward, #reverse{
+  width: 60%;
+  height: 50%;
+  left: 20%;
+}
+#forward{
+  top: 0;
+}
+#reverse{
+  bottom: 0;
+}
+#right, #left{
+  width: 20%;
+  height: 100%;
+  top: 0;
+}
+#left{
+  left: 0;
+}
+#right{
+  right:0;
+}
+
+    </style>
+  </head>
+  <body>
+  <div id="forward">
+    forward
+  </div>
+  <div id="reverse">
+    reverse
+  </div>
+  <div id="right">
+    right
+  </div>
+  <div id="left">
+    left
+  </div>
+  </body>
+</html>
