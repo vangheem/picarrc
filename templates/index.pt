@@ -1,6 +1,8 @@
 <html>
   <head>
     <script type="text/javascript" src="/static/jquery.js"></script>
+    <script type="text/javascript" src="/static/jquery.jplayer.min.js"></script>
+    <script type="text/javascript" src="/static/video.js"></script>
     <script type="text/javascript" src="/static/wsjs/swfobject.js"></script>
     <script type="text/javascript" src="/static/wsjs/web_socket.js"></script>
 
@@ -10,7 +12,7 @@
       WEB_SOCKET_SWF_LOCATION = "/static/wsjs/WebSocketMain.swf";
 
       // Write your code in the same way as for native WebSocket:
-      var ws = new WebSocket("ws://127.0.0.1:8000/socket");
+      var ws = new WebSocket("ws://192.168.1.108:8000/socket");
       ws.onopen = function() {
         //ws.send("Hello");  // Sends a message.
       };
@@ -21,12 +23,19 @@
       };
 
       $(document).ready(function(){
-        $('div').mousedown(function(){
+        var eventstart = 'mousedown';
+        var eventend = 'mouseup';
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+          eventstart = 'touchstart';
+          eventend = 'touchend touchcancel';
+        }
+        
+        $('div.controls div').on(eventstart, function(){
           ws.send(JSON.stringify({
             dir: $(this).attr('id'),
             stop: false
           }));
-        }).mouseup(function(){
+        }).on(eventend, function(){
           ws.send(JSON.stringify({
             dir: $(this).attr('id'),
             stop: true
@@ -36,8 +45,21 @@
 
     </script>
     <style>
-div{
-  position: fixed;
+div.video{
+  width: 100%;
+  height: 50%;
+}
+div.video img{
+  width: 100%;
+  height: 100%;
+}
+div.controls{
+  position: relative;
+  width: 100%;
+  height: 50%;
+}
+div.controls div{
+  position: absolute;
   border: 1px solid black;
 }
 #forward, #reverse{
@@ -66,6 +88,12 @@ div{
     </style>
   </head>
   <body>
+
+  <div class="video">
+    <img src="http://192.168.1.147:8080/video" />
+  </div>
+
+  <div class="controls">
   <div id="forward">
     forward
   </div>
@@ -78,5 +106,6 @@ div{
   <div id="left">
     left
   </div>
+</div>
   </body>
 </html>
